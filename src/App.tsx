@@ -10,9 +10,19 @@ import {
   Copy,
   History,
   X,
+  User,
+  Heart,
+  Download,
+  Eye,
+  ChevronRight,
+  Sparkles,
+  AlertCircle,
+  CheckCircle2,
+  Info,
+  ArrowRight
 } from 'lucide-react';
 import debounce from 'lodash/debounce';
-import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
 import { useInstallPrompt } from './hooks/useInstallPrompt';
 
 interface Location {
@@ -62,6 +72,7 @@ function MainView({
   handleLocationSearch,
   handleTimeChange,
   findMatch,
+  checkOriginalMatch,
   copyToClipboard,
   name,
   date,
@@ -77,12 +88,11 @@ function MainView({
   setAmpm,
   setShowHistory,
   showHistory,
-  historySearchQuery,
-  setHistorySearchQuery,
-  filteredHistory,
-  applyHistoryItem,
   ignoredDates,
-  setShowIgnoredDates
+  setShowIgnoredDates,
+  searchHistory,
+  isInstallable,
+  installApp
 }: {
   result: MatchResult | null;
   loading: boolean;
@@ -94,6 +104,7 @@ function MainView({
   handleLocationSearch: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleTimeChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   findMatch: (isRetry: boolean) => Promise<void>;
+  checkOriginalMatch: () => Promise<void>;
   copyToClipboard: (text: string) => void;
   name: string;
   date: string;
@@ -109,144 +120,117 @@ function MainView({
   setAmpm: React.Dispatch<React.SetStateAction<string>>;
   setShowHistory: React.Dispatch<React.SetStateAction<boolean>>;
   showHistory: boolean;
-  historySearchQuery: string;
-  setHistorySearchQuery: React.Dispatch<React.SetStateAction<string>>;
-  filteredHistory: SearchHistory[];
-  applyHistoryItem: (item: SearchHistory) => void;
   ignoredDates: IgnoredDate[];
   setShowIgnoredDates: React.Dispatch<React.SetStateAction<boolean>>;
+  searchHistory: SearchHistory[];
+  isInstallable: boolean;
+  installApp: () => void;
 }) {
   const navigate = useNavigate();
   
   return (
-    <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8 space-y-6">
+    <div className="bg-white rounded-3xl shadow-2xl p-8 space-y-8 relative overflow-hidden">
+      <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-bl-full -z-10 opacity-75" />
+      <div className="absolute bottom-0 left-0 w-32 h-32 bg-gradient-to-tr from-pink-100 to-indigo-100 rounded-tr-full -z-10 opacity-75" />
+      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-br from-indigo-50/30 to-purple-50/30 rounded-full blur-3xl -z-10" />
+      
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-center bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-          Horoscope Match Finder
-        </h1>
-        <button
-          title="Toggle search history"
-          onClick={() => setShowHistory(!showHistory)}
-          className="p-2 rounded-lg hover:bg-gray-100"
-        >
-          <History className="h-6 w-6 text-indigo-600" />
-        </button>
+        <div>
+          <div className="flex items-center gap-3">
+            <div className="relative">
+              <Heart className="h-8 w-8 text-pink-500 animate-pulse" />
+              <div className="absolute -top-1 -right-1 w-3 h-3 bg-indigo-500 rounded-full" />
+            </div>
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+              Horoscope Match
+            </h1>
+          </div>
+          <p className="text-gray-500 mt-2 flex items-center gap-2">
+            <Sparkles className="h-4 w-4 text-indigo-400" />
+            Find your perfect match
+          </p>
+        </div>
+        <div className="flex items-center gap-3">
+          {isInstallable && (
+            <button
+              onClick={installApp}
+              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-xl hover:from-indigo-600 hover:to-purple-600 transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-md hover:shadow-lg"
+            >
+              <Download className="h-4 w-4" />
+              <span>Install App</span>
+            </button>
+          )}
+          <button
+            title="Toggle search history"
+            onClick={() => setShowHistory(!showHistory)}
+            className="p-3 rounded-2xl hover:bg-indigo-50 transition-all duration-300 group relative"
+          >
+            <History className="h-6 w-6 text-indigo-600 group-hover:scale-110 transition-transform duration-300" />
+            {searchHistory.length > 0 && (
+              <span className="absolute -top-1 -right-1 bg-pink-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center animate-bounce">
+                {searchHistory.length}
+              </span>
+            )}
+          </button>
+        </div>
       </div>
 
-      {showHistory && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl p-6 max-w-2xl w-full max-h-[80vh] flex flex-col">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-semibold">Search History</h2>
-              <button
-                title="Close history"
-                onClick={() => setShowHistory(false)}
-                className="p-2 hover:bg-gray-100 rounded-full"
-              >
-                <X className="h-5 w-5" />
-              </button>
+      <div className="space-y-6">
+        <div className="flex items-center justify-between px-2 py-3 bg-indigo-50/50 rounded-2xl mb-6">
+          <div className="flex items-center gap-2 text-sm font-medium text-indigo-600">
+            <div className={`w-6 h-6 rounded-full flex items-center justify-center ${name ? 'bg-indigo-600 text-white' : 'bg-indigo-100 text-indigo-400'}`}>
+              1
             </div>
-
-            <div className="relative mb-4">
-              <input
-                type="text"
-                value={historySearchQuery}
-                onChange={(e) => setHistorySearchQuery(e.target.value)}
-                placeholder="Search history..."
-                className="w-full px-4 py-2.5 pl-10 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-              />
-              <Search className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+            <span>Name</span>
+          </div>
+          <ArrowRight className="h-4 w-4 text-indigo-300" />
+          <div className="flex items-center gap-2 text-sm font-medium text-indigo-600">
+            <div className={`w-6 h-6 rounded-full flex items-center justify-center ${selectedLocation ? 'bg-indigo-600 text-white' : 'bg-indigo-100 text-indigo-400'}`}>
+              2
             </div>
-
-            <div className="overflow-y-auto flex-1 -mx-6 px-6">
-              <div className="space-y-3">
-                {filteredHistory.length === 0 ? (
-                  <div className="text-center text-gray-500 py-4">
-                    No matching records found
-                  </div>
-                ) : (
-                  filteredHistory.map((item, index) => (
-                    <div
-                      key={index}
-                      onClick={() => applyHistoryItem(item)}
-                      className="p-4 border border-gray-200 rounded-xl cursor-pointer hover:bg-indigo-50 transition-colors duration-150 group"
-                    >
-                      <div className="flex justify-between items-start mb-2">
-                        <div>
-                          <h3 className="font-medium text-lg text-indigo-600">{item.name}</h3>
-                          <p className="text-sm text-gray-600">
-                            {item.location.name}, {item.location.state}
-                          </p>
-                        </div>
-                        <div className="text-right text-sm text-gray-500">
-                          {new Date(item.timestamp).toLocaleDateString()}
-                        </div>
-                      </div>
-                      
-                      <div className="grid grid-cols-2 gap-2 text-sm">
-                        <div className="flex items-center gap-2">
-                          <Calendar className="h-4 w-4 text-gray-400" />
-                          <span>{item.date}</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Clock className="h-4 w-4 text-gray-400" />
-                          <span>{item.time} {item.ampm}</span>
-                        </div>
-                      </div>
-
-                      {item.result && (
-                        <div className="mt-2 pt-2 border-t border-gray-100">
-                          <div className="grid grid-cols-2 gap-2 text-sm">
-                            <div className="flex items-center gap-2">
-                              <Star className="h-4 w-4 text-indigo-400" />
-                              <span>Nakshatra: {item.result.nakshatra}</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <Moon className="h-4 w-4 text-indigo-400" />
-                              <span>Rasi: {item.result.rasi}</span>
-                            </div>
-                          </div>
-                          <div className="mt-1 flex items-center gap-2 text-sm">
-                            <Star className="h-4 w-4 text-yellow-400" />
-                            <span>Match Points: {item.result.points}/10</span>
-                          </div>
-                          {item.ignoredDates && item.ignoredDates.length > 0 && (
-                            <div className="mt-1 flex items-center gap-2 text-sm text-gray-500">
-                              <X className="h-4 w-4" />
-                              <span>Ignored Dates: {item.ignoredDates.length}</span>
-                            </div>
-                          )}
-                        </div>
-                      )}
-
-                      <div className="mt-2 opacity-0 group-hover:opacity-100 transition-opacity text-sm text-indigo-600">
-                        Click to apply these details
-                      </div>
-                    </div>
-                  ))
-                )}
-              </div>
+            <span>Location</span>
+          </div>
+          <ArrowRight className="h-4 w-4 text-indigo-300" />
+          <div className="flex items-center gap-2 text-sm font-medium text-indigo-600">
+            <div className={`w-6 h-6 rounded-full flex items-center justify-center ${date ? 'bg-indigo-600 text-white' : 'bg-indigo-100 text-indigo-400'}`}>
+              3
             </div>
+            <span>Date</span>
+          </div>
+          <ArrowRight className="h-4 w-4 text-indigo-300" />
+          <div className="flex items-center gap-2 text-sm font-medium text-indigo-600">
+            <div className={`w-6 h-6 rounded-full flex items-center justify-center ${time ? 'bg-indigo-600 text-white' : 'bg-indigo-100 text-indigo-400'}`}>
+              4
+            </div>
+            <span>Time</span>
           </div>
         </div>
-      )}
 
-      <div className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+        <div className="group relative">
+          <label className="block text-sm font-medium text-gray-700 mb-2 group-focus-within:text-indigo-600 transition-colors flex items-center gap-2">
+            <User className="h-4 w-4" />
             Girl's Name
           </label>
-          <input
-            type="text"
-            value={name}
-            onChange={handleNameChange}
-            className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-            placeholder="Enter name"
-          />
+          <div className="relative">
+            <input
+              type="text"
+              value={name}
+              onChange={handleNameChange}
+              className="w-full px-5 py-3.5 border-2 border-gray-200 rounded-2xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300 hover:border-gray-300"
+              placeholder="Enter name"
+            />
+            {name && (
+              <CheckCircle2 className="absolute right-4 top-4 h-5 w-5 text-green-500" />
+            )}
+          </div>
+          <div className="absolute -top-2 right-0 text-xs text-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity">
+            Enter the girl's full name
+          </div>
         </div>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+        <div className="group relative">
+          <label className="block text-sm font-medium text-gray-700 mb-2 group-focus-within:text-indigo-600 transition-colors flex items-center gap-2">
+            <MapPin className="h-4 w-4" />
             Birth Place
           </label>
           <div className="relative">
@@ -254,38 +238,50 @@ function MainView({
               type="text"
               value={searchQuery}
               onChange={handleLocationSearch}
-              className="w-full px-4 py-2.5 pl-10 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              className="w-full px-5 py-3.5 pl-12 border-2 border-gray-200 rounded-2xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300 hover:border-gray-300"
               placeholder="Search location..."
             />
-            <MapPin className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
-
-            {locations.length > 0 && !selectedLocation && (
-              <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-xl shadow-lg max-h-60 overflow-auto">
+            <MapPin className="absolute left-4 top-4 h-5 w-5 text-gray-400" />
+            {selectedLocation && (
+              <CheckCircle2 className="absolute right-4 top-4 h-5 w-5 text-green-500" />
+            )}
+            
+            {locations.length > 0 && (
+              <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-xl shadow-lg max-h-60 overflow-auto">
+                <div className="sticky top-0 bg-indigo-50/80 backdrop-blur-sm p-2 text-xs text-indigo-600 flex items-center gap-2">
+                  <Info className="h-4 w-4" />
+                  {locations.length} locations found
+                </div>
                 {locations.map((location, index) => (
-                  <div
+                  <button
                     key={index}
-                    className="px-4 py-3 hover:bg-indigo-50 cursor-pointer transition-colors duration-150"
                     onClick={() => {
                       setSelectedLocation(location);
-                      setSearchQuery(
-                        `${location.name}, ${location.state}, ${location.country}`
-                      );
+                      setSearchQuery(`${location.name}, ${location.state}, ${location.country}`);
                       setLocations([]);
                     }}
+                    className="w-full px-4 py-3 text-left hover:bg-indigo-50 focus:bg-indigo-50 focus:outline-none transition-colors group"
                   >
-                    <div className="font-medium">{location.name}</div>
-                    <div className="text-sm text-gray-500">
-                      {location.state}, {location.country}
+                    <div className="flex items-center gap-3">
+                      <MapPin className="h-5 w-5 text-gray-400 group-hover:text-indigo-500 transition-colors" />
+                      <div>
+                        <div className="font-medium">{location.name}</div>
+                        <div className="text-sm text-gray-600">{location.state}, {location.country}</div>
+                      </div>
                     </div>
-                  </div>
+                  </button>
                 ))}
               </div>
             )}
           </div>
+          <div className="absolute -top-2 right-0 text-xs text-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity">
+            Enter birth place for accurate results
+          </div>
         </div>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+        <div className="group relative">
+          <label className="block text-sm font-medium text-gray-700 mb-2 group-focus-within:text-indigo-600 transition-colors flex items-center gap-2">
+            <Calendar className="h-4 w-4" />
             Birth Date
           </label>
           <div className="relative">
@@ -294,16 +290,22 @@ function MainView({
               value={date}
               onChange={(e) => setDate(e.target.value)}
               title="Birth date"
-              placeholder="Select birth date"
-              className="w-full px-4 py-2.5 pl-10 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              className="w-full px-5 py-3.5 pl-12 border-2 border-gray-200 rounded-2xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300 hover:border-gray-300"
             />
-            <Calendar className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+            <Calendar className="absolute left-4 top-4 h-5 w-5 text-gray-400" />
+            {date && (
+              <CheckCircle2 className="absolute right-4 top-4 h-5 w-5 text-green-500" />
+            )}
+          </div>
+          <div className="absolute -top-2 right-0 text-xs text-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity">
+            Select birth date
           </div>
         </div>
 
         <div className="flex gap-4">
-          <div className="flex-1">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+          <div className="flex-1 group relative">
+            <label className="block text-sm font-medium text-gray-700 mb-2 group-focus-within:text-indigo-600 transition-colors flex items-center gap-2">
+              <Clock className="h-4 w-4" />
               Birth Time
             </label>
             <div className="relative">
@@ -313,21 +315,27 @@ function MainView({
                 onChange={handleTimeChange}
                 placeholder="HHMM"
                 maxLength={5}
-                className="w-full px-4 py-2.5 pl-10 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                className="w-full px-5 py-3.5 pl-12 border-2 border-gray-200 rounded-2xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300 hover:border-gray-300"
               />
-              <Clock className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+              <Clock className="absolute left-4 top-4 h-5 w-5 text-gray-400" />
+              {time && (
+                <CheckCircle2 className="absolute right-4 top-4 h-5 w-5 text-green-500" />
+              )}
+            </div>
+            <div className="absolute -top-2 right-0 text-xs text-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity">
+              Enter birth time in HHMM format
             </div>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+          <div className="w-32 group relative">
+            <label className="block text-sm font-medium text-gray-700 mb-2 group-focus-within:text-indigo-600 transition-colors">
               AM/PM
             </label>
             <select
               value={ampm}
               onChange={(e) => setAmpm(e.target.value)}
               title="Select AM/PM"
-              className="w-24 px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              className="w-full px-5 py-3.5 border-2 border-gray-200 rounded-2xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300 appearance-none bg-white hover:border-gray-300"
             >
               <option value="am">AM</option>
               <option value="pm">PM</option>
@@ -335,52 +343,107 @@ function MainView({
           </div>
         </div>
 
-        <button
-          onClick={() => findMatch(false)}
-          disabled={loading}
-          className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-3 px-4 rounded-xl hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 flex items-center justify-center transition-all duration-150"
-        >
-          {loading ? (
-            <>
-              <Loader2 className="animate-spin mr-2" />
-              {isSearchingNext ? 'Finding Next Match...' : 'Finding Perfect Match...'}
-            </>
-          ) : (
-            result ? 'Find Another Match' : 'Find Perfect Match'
-          )}
-        </button>
+        <div className="space-y-4 pt-6">
+          <button
+            onClick={checkOriginalMatch}
+            disabled={loading || !name || !selectedLocation || !date || !time}
+            className="w-full bg-gradient-to-r from-emerald-500 to-teal-500 text-white py-4 px-6 rounded-2xl hover:from-emerald-600 hover:to-teal-600 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] disabled:hover:scale-100 shadow-lg hover:shadow-xl disabled:hover:shadow-lg group relative"
+          >
+            {loading ? (
+              <>
+                <Loader2 className="animate-spin h-6 w-6" />
+                <span className="text-lg">Checking Original Match...</span>
+              </>
+            ) : (
+              <>
+                <Star className="h-6 w-6 group-hover:rotate-45 transition-transform duration-300" />
+                <span className="text-lg">Check Original Match (23/07/1996)</span>
+              </>
+            )}
+            {(!name || !selectedLocation || !date || !time) && (
+              <div className="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs py-1 px-2 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
+                Please fill in all fields first
+              </div>
+            )}
+          </button>
+
+          <button
+            onClick={() => findMatch(false)}
+            disabled={loading || !name || !selectedLocation || !date || !time}
+            className="w-full bg-gradient-to-r from-indigo-500 to-purple-500 text-white py-4 px-6 rounded-2xl hover:from-indigo-600 hover:to-purple-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] disabled:hover:scale-100 shadow-lg hover:shadow-xl disabled:hover:shadow-lg group relative"
+          >
+            {loading ? (
+              <>
+                <Loader2 className="animate-spin h-6 w-6" />
+                <span className="text-lg">
+                  {isSearchingNext ? 'Finding Next Match...' : 'Finding Perfect Match...'}
+                </span>
+              </>
+            ) : (
+              <>
+                <Heart className="h-6 w-6 group-hover:scale-110 transition-transform duration-300" />
+                <span className="text-lg">
+                  {result ? 'Find Another Match' : 'Find Perfect Match'}
+                </span>
+              </>
+            )}
+            {(!name || !selectedLocation || !date || !time) && (
+              <div className="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs py-1 px-2 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
+                Please fill in all fields first
+              </div>
+            )}
+          </button>
+        </div>
 
         {status && (
-          <div className="text-sm text-gray-600 text-center animate-pulse">
+          <div className="text-sm text-indigo-600 text-center animate-pulse bg-indigo-50 py-3 px-4 rounded-xl flex items-center justify-center gap-2">
+            <AlertCircle className="h-4 w-4" />
             {status}
           </div>
         )}
 
         {result && (
-          <div className="mt-6 p-6 bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-100 rounded-xl space-y-4">
-            <div className="flex justify-between items-start mb-2">
-              <h2 className="text-xl font-semibold text-indigo-900">
-                Perfect Match Found!
-              </h2>
+          <div className="mt-8 p-8 bg-gradient-to-br from-white to-indigo-50/50 border-2 border-indigo-100 rounded-3xl space-y-6 relative overflow-hidden shadow-lg transform transition-all duration-500 hover:shadow-2xl hover:scale-[1.02]">
+            <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-bl-full opacity-50 -z-10" />
+            
+            <div className="flex justify-between items-start">
+              <div className="flex items-center gap-3">
+                {result.date === '23/7/1996' ? (
+                  <div className="relative">
+                    <Star className="h-7 w-7 text-yellow-500 animate-spin-slow" />
+                    <div className="absolute inset-0 bg-yellow-500 rounded-full animate-ping opacity-20" />
+                  </div>
+                ) : (
+                  <div className="relative">
+                    <Heart className="h-7 w-7 text-pink-500 animate-pulse" />
+                    <div className="absolute inset-0 bg-pink-500 rounded-full animate-ping opacity-20" />
+                  </div>
+                )}
+                <h2 className="text-2xl font-bold text-indigo-900">
+                  {result.date === '23/7/1996' ? 'Your Original Horoscope' : 'Perfect Match Found!'}
+                </h2>
+              </div>
               <button
                 onClick={() => setShowIgnoredDates(true)}
-                className="text-sm text-indigo-600 hover:text-indigo-700 flex items-center gap-1"
+                className="text-sm text-indigo-600 hover:text-indigo-700 flex items-center gap-2 px-3 py-1.5 rounded-xl hover:bg-indigo-50 transition-all duration-300 group"
               >
-                <X className="h-4 w-4" />
-                View Ignored Dates ({ignoredDates.length})
+                <X className="h-4 w-4 group-hover:rotate-90 transition-transform duration-300" />
+                <span>Ignored ({ignoredDates.length})</span>
               </button>
             </div>
-            <div className="space-y-3">
-              <div className="flex items-center gap-2">
-                <Calendar className="h-5 w-5 text-indigo-600" />
-                <span className="text-gray-700">
+
+            <div className="space-y-4">
+              <div className="flex items-center gap-3 p-4 hover:bg-white rounded-xl transition-colors group">
+                <Calendar className="h-6 w-6 text-indigo-600 group-hover:scale-110 transition-transform duration-300" />
+                <span className="text-gray-700 text-lg">
                   Birth Date: {result.date}
                 </span>
               </div>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Star className="h-5 w-5 text-indigo-600" />
-                  <span className="text-gray-700">
+
+              <div className="flex items-center justify-between p-4 hover:bg-white rounded-xl transition-colors group">
+                <div className="flex items-center gap-3">
+                  <Star className="h-6 w-6 text-indigo-600 group-hover:rotate-45 transition-transform duration-300" />
+                  <span className="text-gray-700 text-lg">
                     Nakshatra: {result.nakshatra}
                   </span>
                 </div>
@@ -390,15 +453,19 @@ function MainView({
                     e.stopPropagation();
                     copyToClipboard(result.nakshatra);
                   }}
-                  className="p-1.5 hover:bg-white rounded-lg transition-colors"
+                  className="p-2 opacity-0 group-hover:opacity-100 hover:bg-indigo-50 rounded-xl transition-all duration-300 relative"
                 >
                   <Copy className="h-4 w-4 text-gray-500" />
+                  <span className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs py-1 px-2 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
+                    Copy to clipboard
+                  </span>
                 </button>
               </div>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Moon className="h-5 w-5 text-indigo-600" />
-                  <span className="text-gray-700">
+
+              <div className="flex items-center justify-between p-4 hover:bg-white rounded-xl transition-colors group">
+                <div className="flex items-center gap-3">
+                  <Moon className="h-6 w-6 text-indigo-600 group-hover:rotate-45 transition-transform duration-300" />
+                  <span className="text-gray-700 text-lg">
                     Rasi: {result.rasi}
                   </span>
                 </div>
@@ -408,43 +475,54 @@ function MainView({
                     e.stopPropagation();
                     copyToClipboard(result.rasi);
                   }}
-                  className="p-1.5 hover:bg-white rounded-lg transition-colors"
+                  className="p-2 opacity-0 group-hover:opacity-100 hover:bg-indigo-50 rounded-xl transition-all duration-300 relative"
                 >
                   <Copy className="h-4 w-4 text-gray-500" />
+                  <span className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs py-1 px-2 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
+                    Copy to clipboard
+                  </span>
                 </button>
               </div>
-              <div className="flex items-center gap-2">
-                <Star className="h-5 w-5 text-yellow-500" />
-                <span className="text-gray-700">
+
+              <div className="flex items-center gap-3 p-4 hover:bg-white rounded-xl transition-colors group">
+                <Star className="h-6 w-6 text-yellow-500 group-hover:scale-110 transition-transform duration-300" />
+                <span className="text-gray-700 text-lg">
                   Match Points: {result.points}/10
                 </span>
               </div>
-              <div className="flex flex-col gap-2 mt-4">
+
+              <div className="flex flex-col gap-3 pt-4">
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
                     downloadHoroscopeImage(result.date, result.rasi, result.nakshatra);
                   }}
                   disabled={isDownloading}
-                  className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-2.5 px-4 rounded-xl hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-all duration-150 disabled:opacity-50 flex items-center justify-center gap-2"
+                  className="w-full bg-gradient-to-r from-indigo-500 to-purple-500 text-white py-4 px-6 rounded-xl hover:from-indigo-600 hover:to-purple-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] disabled:hover:scale-100 shadow-lg hover:shadow-xl disabled:hover:shadow-lg disabled:opacity-50 text-lg flex items-center justify-center gap-3 group"
                 >
                   {isDownloading ? (
                     <>
-                      <Loader2 className="h-5 w-5 animate-spin" />
-                      Generating Horoscope...
+                      <Loader2 className="h-6 w-6 animate-spin" />
+                      <span>Generating Horoscope...</span>
                     </>
                   ) : (
-                    'Download Horoscope'
+                    <>
+                      <Download className="h-6 w-6 group-hover:scale-110 transition-transform duration-300" />
+                      <span>Download Horoscope</span>
+                    </>
                   )}
                 </button>
+
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
                     navigate('/details');
                   }}
-                  className="w-full bg-white border border-indigo-200 text-indigo-600 py-2.5 px-4 rounded-xl hover:bg-indigo-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-all duration-150"
+                  className="w-full bg-white border-2 border-indigo-200 text-indigo-600 py-4 px-6 rounded-xl hover:bg-indigo-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] text-lg flex items-center justify-center gap-3 group"
                 >
-                  View Match Details
+                  <Eye className="h-6 w-6 group-hover:scale-110 transition-transform duration-300" />
+                  <span>View Match Details</span>
+                  <ChevronRight className="h-5 w-5 group-hover:translate-x-1 transition-transform duration-300" />
                 </button>
               </div>
             </div>
@@ -488,7 +566,7 @@ function DetailsView({ result }: { result: MatchResult | null }) {
 
 function App() {
   const [name, setName] = useState('');
-  const [date, setDate] = useState('');
+  const [date, setDate] = useState('1996-01-01');
   const [time, setTime] = useState('');
   const [ampm, setAmpm] = useState('am');
   const [searchQuery, setSearchQuery] = useState('');
@@ -500,7 +578,6 @@ function App() {
   const [showHistory, setShowHistory] = useState(false);
   const [searchHistory, setSearchHistory] = useState<SearchHistory[]>([]);
   const [isDownloading, setIsDownloading] = useState(false);
-  const [view, setView] = useState<'main' | 'details'>('main');
   const [historySearchQuery, setHistorySearchQuery] = useState('');
   const [ignoredDates, setIgnoredDates] = useState<IgnoredDate[]>([]);
   const [showIgnoredDates, setShowIgnoredDates] = useState(false);
@@ -519,7 +596,6 @@ function App() {
     }
   }, []);
 
-  // Clear ignore list and result when inputs change
   useEffect(() => {
     if (!isApplyingHistory) {
       const shouldClear = name || selectedLocation || date || time || ampm;
@@ -562,10 +638,8 @@ function App() {
 
   const parseLocationData = (data: string): Location[] => {
     try {
-      // Parse the JSON string to get an array of location strings
       const locationStrings = JSON.parse(data);
       
-      // Map each location string to a Location object
       return locationStrings.map((locationStr: string) => {
         const parts = locationStr.split('|');
         return {
@@ -658,24 +732,23 @@ function App() {
     const combinations = [];
     
     switch (strategy) {
-      case 'july':
-        // Generate dates in July (month 7)
+      case 'july': {
         for (let i = 0; i < count; i++) {
           combinations.push({ day: Math.floor(Math.random() * 31) + 1, month: 7 });
         }
         break;
+      }
         
-      case 'date23':
-        // Generate combinations with date 23 in different months
+      case 'date23': {
         const months = Array.from({ length: 12 }, (_, i) => i + 1);
         const shuffledMonths = months.sort(() => Math.random() - 0.5);
         for (let i = 0; i < Math.min(count, 12); i++) {
           combinations.push({ day: 23, month: shuffledMonths[i] });
         }
         break;
+      }
         
-      case 'random':
-        // Generate random date combinations
+      case 'random': {
         while (combinations.length < count) {
           const month = Math.floor(Math.random() * 12) + 1;
           const maxDays = new Date(1996, month, 0).getDate();
@@ -683,6 +756,7 @@ function App() {
           combinations.push({ day, month });
         }
         break;
+      }
     }
     
     return combinations;
@@ -754,13 +828,10 @@ function App() {
       return;
     }
 
-    // Clear previous result before starting new search
     if (!isRetry) {
       setResult(null);
     }
 
-    // If we have a current result and we're finding another match,
-    // add the current date to ignore list first
     if (result && !isRetry) {
       const [day, month] = result.date.split('/').map(Number);
       const newIgnoredDate: IgnoredDate = {
@@ -782,19 +853,16 @@ function App() {
 
       let bestMatch = null;
       const searchStrategies = [
-        // July dates with decreasing points
         { strategy: 'july' as const, targetPoints: 9.5, message: 'Checking July dates for matches ≥ 9.5 points...' },
         { strategy: 'july' as const, targetPoints: 9, message: 'Checking July dates for matches ≥ 9 points...' },
         { strategy: 'july' as const, targetPoints: 8.5, message: 'Checking July dates for matches ≥ 8.5 points...' },
         { strategy: 'july' as const, targetPoints: 8, message: 'Checking July dates for matches ≥ 8 points...' },
         
-        // Date 23 with decreasing points
         { strategy: 'date23' as const, targetPoints: 9.5, message: 'Checking date 23 across months for matches ≥ 9.5 points...' },
         { strategy: 'date23' as const, targetPoints: 9, message: 'Checking date 23 across months for matches ≥ 9 points...' },
         { strategy: 'date23' as const, targetPoints: 8.5, message: 'Checking date 23 across months for matches ≥ 8.5 points...' },
         { strategy: 'date23' as const, targetPoints: 8, message: 'Checking date 23 across months for matches ≥ 8 points...' },
         
-        // Random dates with decreasing points
         { strategy: 'random' as const, targetPoints: 9.5, message: 'Searching random dates for matches ≥ 9.5 points...' },
         { strategy: 'random' as const, targetPoints: 9, message: 'Searching random dates for matches ≥ 9 points...' },
         { strategy: 'random' as const, targetPoints: 8.5, message: 'Searching random dates for matches ≥ 8.5 points...' },
@@ -809,7 +877,6 @@ function App() {
         setStatus(isSearchingNext ? `Finding next match: ${message}` : message);
         const combinations = generateDateCombinations(strategy, 100);
         
-        // Filter out ignored dates
         const validCombinations = combinations.filter(
           ({ day, month }) => !isDateIgnored(day, month)
         );
@@ -818,11 +885,15 @@ function App() {
           const formData = new FormData();
           formData.append('compatibility_system', 'Tamil Porutham');
           formData.append('gname', name);
-          formData.append(
-            'glocation',
-            `${selectedLocation.name}, ${selectedLocation.state}, ${selectedLocation.country}`
-          );
-          formData.append('gloc', selectedLocation.loc);
+
+          if (selectedLocation) {
+            formData.append(
+              'glocation',
+              `${selectedLocation.name}, ${selectedLocation.state}, ${selectedLocation.country}`
+            );
+            formData.append('gloc', selectedLocation.loc);
+          }
+
           formData.append('gyear', year);
           formData.append('gmonth', month.toString());
           formData.append('gday', day.toString());
@@ -869,7 +940,7 @@ function App() {
         setResult(bestMatch);
         const newHistory: SearchHistory = {
           name,
-          location: selectedLocation,
+          location: selectedLocation!,
           date,
           time,
           ampm,
@@ -896,7 +967,6 @@ function App() {
   const applyHistoryItem = (item: SearchHistory) => {
     setIsApplyingHistory(true);
     
-    // First update all form fields
     setName(item.name);
     setSelectedLocation(item.location);
     setSearchQuery(`${item.location.name}, ${item.location.state}, ${item.location.country}`);
@@ -904,17 +974,14 @@ function App() {
     setTime(item.time);
     setAmpm(item.ampm);
 
-    // Then update ignored dates if they exist
     if (item.ignoredDates) {
       setIgnoredDates(item.ignoredDates);
       localStorage.setItem('ignoredDates', JSON.stringify(item.ignoredDates));
     }
 
-    // Finally set the result and close history
     setResult(item.result || null);
     setShowHistory(false);
 
-    // Reset the applying flag after a delay
     setTimeout(() => {
       setIsApplyingHistory(false);
     }, 500);
@@ -927,7 +994,6 @@ function App() {
     searchLocations(value);
   };
 
-  // Filter history based on search query
   const filteredHistory = useMemo(() => {
     const query = historySearchQuery.toLowerCase();
     return searchHistory.filter(item => 
@@ -940,10 +1006,82 @@ function App() {
     );
   }, [searchHistory, historySearchQuery]);
 
+  const checkOriginalMatch = async () => {
+    if (!name || !date || !time || !selectedLocation) {
+      alert('Please fill in all fields');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const [year, month, day] = date.split('-');
+      const [hours, minutes] = time.split(':');
+
+      const formData = new FormData();
+      formData.append('compatibility_system', 'Tamil Porutham');
+      formData.append('gname', name);
+      formData.append(
+        'glocation',
+        `${selectedLocation.name}, ${selectedLocation.state}, ${selectedLocation.country}`
+      );
+      formData.append('gloc', selectedLocation.loc);
+      formData.append('gyear', year);
+      formData.append('gmonth', month.toString());
+      formData.append('gday', day.toString());
+      formData.append('ghour', hours);
+      formData.append('gmin', minutes);
+      formData.append('gapm', ampm);
+      formData.append('ggender', 'female');
+      formData.append('bname', 'Ranjithkumar R');
+      formData.append('blocation', 'Vellore, Tamil Nadu, India');
+      formData.append('bloc', '1253286');
+      formData.append('byear', '1996');
+      formData.append('bmonth', '7');
+      formData.append('bday', '23');
+      formData.append('bhour', '9');
+      formData.append('bmin', '45');
+      formData.append('bapm', 'am');
+      formData.append('bgender', 'male');
+      formData.append('p', '1');
+
+      const { points, html } = await checkMatch(formData);
+      const { nakshatra, rasi } = await getNakshatraAndRasi(23, 7);
+
+      const originalMatch = {
+        date: '23/7/1996',
+        nakshatra,
+        rasi,
+        points,
+        matchHtml: html
+      };
+
+      setResult(originalMatch);
+      const newHistory: SearchHistory = {
+        name,
+        location: selectedLocation,
+        date,
+        time,
+        ampm,
+        result: originalMatch,
+        timestamp: Date.now(),
+        ignoredDates: [...ignoredDates]
+      };
+      const updatedHistory = [newHistory, ...searchHistory].slice(0, 10);
+      setSearchHistory(updatedHistory);
+      localStorage.setItem('searchHistory', JSON.stringify(updatedHistory));
+    } catch (error) {
+      console.error('Error checking original match:', error);
+      setResult(null);
+    } finally {
+      setLoading(false);
+      setStatus('');
+    }
+  };
+
   return (
     <Router>
-      <div className="min-h-screen bg-gradient-to-br from-indigo-100 via-purple-100 to-pink-100 p-4 md:p-8">
-        <div className="max-w-lg mx-auto">
+      <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 p-6 md:p-10">
+        <div className="max-w-2xl mx-auto">
           <Routes>
             <Route 
               path="/" 
@@ -959,6 +1097,7 @@ function App() {
                   handleLocationSearch={handleLocationSearch}
                   handleTimeChange={handleTimeChange}
                   findMatch={findMatch}
+                  checkOriginalMatch={checkOriginalMatch}
                   copyToClipboard={copyToClipboard}
                   name={name}
                   date={date}
@@ -974,12 +1113,11 @@ function App() {
                   setAmpm={setAmpm}
                   setShowHistory={setShowHistory}
                   showHistory={showHistory}
-                  historySearchQuery={historySearchQuery}
-                  setHistorySearchQuery={setHistorySearchQuery}
-                  filteredHistory={filteredHistory}
-                  applyHistoryItem={applyHistoryItem}
                   ignoredDates={ignoredDates}
                   setShowIgnoredDates={setShowIgnoredDates}
+                  searchHistory={searchHistory}
+                  isInstallable={isInstallable}
+                  installApp={installApp}
                 />
               } 
             />
@@ -1142,7 +1280,6 @@ function App() {
           </div>
         )}
 
-        {/* Install PWA Prompt */}
         {isInstallable && (
           <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-200 shadow-lg">
             <div className="max-w-lg mx-auto flex items-center justify-between">
