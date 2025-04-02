@@ -129,23 +129,23 @@ function MainView({
   const navigate = useNavigate();
   
   return (
-    <div className="bg-white rounded-3xl shadow-2xl p-8 space-y-8 relative overflow-hidden">
-      <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-bl-full -z-10 opacity-75" />
-      <div className="absolute bottom-0 left-0 w-32 h-32 bg-gradient-to-tr from-pink-100 to-indigo-100 rounded-tr-full -z-10 opacity-75" />
-      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-br from-indigo-50/30 to-purple-50/30 rounded-full blur-3xl -z-10" />
+    <div className="bg-white rounded-3xl shadow-2xl p-4 sm:p-8 space-y-4 sm:space-y-8 relative overflow-hidden">
+      <div className="absolute top-0 right-0 w-24 sm:w-32 h-24 sm:h-32 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-bl-full -z-10 opacity-75" />
+      <div className="absolute bottom-0 left-0 w-24 sm:w-32 h-24 sm:h-32 bg-gradient-to-tr from-pink-100 to-indigo-100 rounded-tr-full -z-10 opacity-75" />
+      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-72 sm:w-96 h-72 sm:h-96 bg-gradient-to-br from-indigo-50/30 to-purple-50/30 rounded-full blur-3xl -z-10" />
       
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <div>
           <div className="flex items-center gap-3">
             <div className="relative">
-              <Heart className="h-8 w-8 text-pink-500 animate-pulse" />
+              <Heart className="h-6 sm:h-8 w-6 sm:w-8 text-pink-500 animate-pulse" />
               <div className="absolute -top-1 -right-1 w-3 h-3 bg-indigo-500 rounded-full" />
             </div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+            <h1 className="text-2xl sm:text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
               Horoscope Match
             </h1>
           </div>
-          <p className="text-gray-500 mt-2 flex items-center gap-2">
+          <p className="text-gray-500 mt-2 flex items-center gap-2 text-sm sm:text-base">
             <Sparkles className="h-4 w-4 text-indigo-400" />
             Find your perfect match
           </p>
@@ -154,7 +154,7 @@ function MainView({
           {isInstallable && (
             <button
               onClick={installApp}
-              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-xl hover:from-indigo-600 hover:to-purple-600 transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-md hover:shadow-lg"
+              className="flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-xl hover:from-indigo-600 hover:to-purple-600 transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-md hover:shadow-lg text-sm sm:text-base"
             >
               <Download className="h-4 w-4" />
               <span>Install App</span>
@@ -163,11 +163,11 @@ function MainView({
           <button
             title="Toggle search history"
             onClick={() => setShowHistory(!showHistory)}
-            className="p-3 rounded-2xl hover:bg-indigo-50 transition-all duration-300 group relative"
+            className="p-2 sm:p-3 rounded-2xl hover:bg-indigo-50 transition-all duration-300 group relative"
           >
-            <History className="h-6 w-6 text-indigo-600 group-hover:scale-110 transition-transform duration-300" />
+            <History className="h-5 sm:h-6 w-5 sm:w-6 text-indigo-600 group-hover:scale-110 transition-transform duration-300" />
             {searchHistory.length > 0 && (
-              <span className="absolute -top-1 -right-1 bg-pink-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center animate-bounce">
+              <span className="absolute -top-1 -right-1 bg-pink-500 text-white text-xs w-4 sm:w-5 h-4 sm:h-5 rounded-full flex items-center justify-center animate-bounce">
                 {searchHistory.length}
               </span>
             )}
@@ -175,40 +175,41 @@ function MainView({
         </div>
       </div>
 
-      <div className="space-y-6">
-        <div className="flex items-center justify-between px-2 py-3 bg-indigo-50/50 rounded-2xl mb-6">
-          <div className="flex items-center gap-2 text-sm font-medium text-indigo-600">
-            <div className={`w-6 h-6 rounded-full flex items-center justify-center ${name ? 'bg-indigo-600 text-white' : 'bg-indigo-100 text-indigo-400'}`}>
+      <div className="space-y-4 sm:space-y-6">
+        <div className="flex items-center justify-between px-2 py-2 sm:py-3 bg-indigo-50/50 rounded-2xl mb-4 sm:mb-6 overflow-x-auto whitespace-nowrap text-xs sm:text-sm">
+          <div className="flex items-center gap-1 sm:gap-2 text-sm font-medium text-indigo-600 px-1 sm:px-2">
+            <div className={`w-5 sm:w-6 h-5 sm:h-6 rounded-full flex items-center justify-center ${name ? 'bg-indigo-600 text-white' : 'bg-indigo-100 text-indigo-400'}`}>
               1
             </div>
             <span>Name</span>
           </div>
-          <ArrowRight className="h-4 w-4 text-indigo-300" />
-          <div className="flex items-center gap-2 text-sm font-medium text-indigo-600">
-            <div className={`w-6 h-6 rounded-full flex items-center justify-center ${selectedLocation ? 'bg-indigo-600 text-white' : 'bg-indigo-100 text-indigo-400'}`}>
+          <ArrowRight className="h-3 sm:h-4 w-3 sm:w-4 text-indigo-300 flex-shrink-0" />
+          <div className="flex items-center gap-1 sm:gap-2 text-sm font-medium text-indigo-600 px-1 sm:px-2">
+            <div className={`w-5 sm:w-6 h-5 sm:h-6 rounded-full flex items-center justify-center ${selectedLocation ? 'bg-indigo-600 text-white' : 'bg-indigo-100 text-indigo-400'}`}>
               2
             </div>
             <span>Location</span>
           </div>
-          <ArrowRight className="h-4 w-4 text-indigo-300" />
-          <div className="flex items-center gap-2 text-sm font-medium text-indigo-600">
-            <div className={`w-6 h-6 rounded-full flex items-center justify-center ${date ? 'bg-indigo-600 text-white' : 'bg-indigo-100 text-indigo-400'}`}>
+          <ArrowRight className="h-3 sm:h-4 w-3 sm:w-4 text-indigo-300 flex-shrink-0" />
+          <div className="flex items-center gap-1 sm:gap-2 text-sm font-medium text-indigo-600 px-1 sm:px-2">
+            <div className={`w-5 sm:w-6 h-5 sm:h-6 rounded-full flex items-center justify-center ${date ? 'bg-indigo-600 text-white' : 'bg-indigo-100 text-indigo-400'}`}>
               3
             </div>
             <span>Date</span>
           </div>
-          <ArrowRight className="h-4 w-4 text-indigo-300" />
-          <div className="flex items-center gap-2 text-sm font-medium text-indigo-600">
-            <div className={`w-6 h-6 rounded-full flex items-center justify-center ${time ? 'bg-indigo-600 text-white' : 'bg-indigo-100 text-indigo-400'}`}>
+          <ArrowRight className="h-3 sm:h-4 w-3 sm:w-4 text-indigo-300 flex-shrink-0" />
+          <div className="flex items-center gap-1 sm:gap-2 text-sm font-medium text-indigo-600 px-1 sm:px-2">
+            <div className={`w-5 sm:w-6 h-5 sm:h-6 rounded-full flex items-center justify-center ${time ? 'bg-indigo-600 text-white' : 'bg-indigo-100 text-indigo-400'}`}>
               4
             </div>
             <span>Time</span>
           </div>
+          <ArrowRight className="h-3 sm:h-4 w-3 sm:w-4 text-indigo-300 flex-shrink-0" />
         </div>
 
         <div className="group relative">
-          <label className="block text-sm font-medium text-gray-700 mb-2 group-focus-within:text-indigo-600 transition-colors flex items-center gap-2">
-            <User className="h-4 w-4" />
+          <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2 group-focus-within:text-indigo-600 transition-colors flex items-center gap-2">
+            <User className="h-3 sm:h-4 w-3 sm:w-4" />
             Girl's Name
           </label>
           <div className="relative">
@@ -216,21 +217,21 @@ function MainView({
               type="text"
               value={name}
               onChange={handleNameChange}
-              className="w-full px-5 py-3.5 border-2 border-gray-200 rounded-2xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300 hover:border-gray-300"
+              className="w-full px-3 sm:px-5 py-2.5 sm:py-3.5 border-2 border-gray-200 rounded-xl sm:rounded-2xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300 hover:border-gray-300 text-sm sm:text-base"
               placeholder="Enter name"
             />
             {name && (
-              <CheckCircle2 className="absolute right-4 top-4 h-5 w-5 text-green-500" />
+              <CheckCircle2 className="absolute right-3 sm:right-4 top-2.5 sm:top-4 h-4 sm:h-5 w-4 sm:w-5 text-green-500" />
             )}
           </div>
-          <div className="absolute -top-2 right-0 text-xs text-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity">
+          <div className="absolute -top-2 right-0 text-[10px] sm:text-xs text-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity">
             Enter the girl's full name
           </div>
         </div>
 
         <div className="group relative">
-          <label className="block text-sm font-medium text-gray-700 mb-2 group-focus-within:text-indigo-600 transition-colors flex items-center gap-2">
-            <MapPin className="h-4 w-4" />
+          <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2 group-focus-within:text-indigo-600 transition-colors flex items-center gap-2">
+            <MapPin className="h-3 sm:h-4 w-3 sm:w-4" />
             Birth Place
           </label>
           <div className="relative">
@@ -238,18 +239,18 @@ function MainView({
               type="text"
               value={searchQuery}
               onChange={handleLocationSearch}
-              className="w-full px-5 py-3.5 pl-12 border-2 border-gray-200 rounded-2xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300 hover:border-gray-300"
+              className="w-full px-3 sm:px-5 py-2.5 sm:py-3.5 pl-8 sm:pl-12 border-2 border-gray-200 rounded-xl sm:rounded-2xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300 hover:border-gray-300 text-sm sm:text-base"
               placeholder="Search location..."
             />
-            <MapPin className="absolute left-4 top-4 h-5 w-5 text-gray-400" />
+            <MapPin className="absolute left-2.5 sm:left-4 top-2.5 sm:top-4 h-4 sm:h-5 w-4 sm:w-5 text-gray-400" />
             {selectedLocation && (
-              <CheckCircle2 className="absolute right-4 top-4 h-5 w-5 text-green-500" />
+              <CheckCircle2 className="absolute right-3 sm:right-4 top-2.5 sm:top-4 h-4 sm:h-5 w-4 sm:w-5 text-green-500" />
             )}
             
             {locations.length > 0 && (
-              <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-xl shadow-lg max-h-60 overflow-auto">
-                <div className="sticky top-0 bg-indigo-50/80 backdrop-blur-sm p-2 text-xs text-indigo-600 flex items-center gap-2">
-                  <Info className="h-4 w-4" />
+              <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-xl shadow-lg max-h-48 sm:max-h-60 overflow-auto">
+                <div className="sticky top-0 bg-indigo-50/80 backdrop-blur-sm p-1.5 sm:p-2 text-[10px] sm:text-xs text-indigo-600 flex items-center gap-2">
+                  <Info className="h-3 sm:h-4 w-3 sm:w-4" />
                   {locations.length} locations found
                 </div>
                 {locations.map((location, index) => (
@@ -260,13 +261,13 @@ function MainView({
                       setSearchQuery(`${location.name}, ${location.state}, ${location.country}`);
                       setLocations([]);
                     }}
-                    className="w-full px-4 py-3 text-left hover:bg-indigo-50 focus:bg-indigo-50 focus:outline-none transition-colors group"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-3 text-left hover:bg-indigo-50 focus:bg-indigo-50 focus:outline-none transition-colors group text-sm sm:text-base"
                   >
-                    <div className="flex items-center gap-3">
-                      <MapPin className="h-5 w-5 text-gray-400 group-hover:text-indigo-500 transition-colors" />
+                    <div className="flex items-center gap-2 sm:gap-3">
+                      <MapPin className="h-4 sm:h-5 w-4 sm:w-5 text-gray-400 group-hover:text-indigo-500 transition-colors" />
                       <div>
-                        <div className="font-medium">{location.name}</div>
-                        <div className="text-sm text-gray-600">{location.state}, {location.country}</div>
+                        <div className="font-medium text-sm sm:text-base">{location.name}</div>
+                        <div className="text-xs sm:text-sm text-gray-600">{location.state}, {location.country}</div>
                       </div>
                     </div>
                   </button>
@@ -274,14 +275,14 @@ function MainView({
               </div>
             )}
           </div>
-          <div className="absolute -top-2 right-0 text-xs text-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity">
+          <div className="absolute -top-2 right-0 text-[10px] sm:text-xs text-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity">
             Enter birth place for accurate results
           </div>
         </div>
 
         <div className="group relative">
-          <label className="block text-sm font-medium text-gray-700 mb-2 group-focus-within:text-indigo-600 transition-colors flex items-center gap-2">
-            <Calendar className="h-4 w-4" />
+          <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2 group-focus-within:text-indigo-600 transition-colors flex items-center gap-2">
+            <Calendar className="h-3 sm:h-4 w-3 sm:w-4" />
             Birth Date
           </label>
           <div className="relative">
@@ -290,22 +291,22 @@ function MainView({
               value={date}
               onChange={(e) => setDate(e.target.value)}
               title="Birth date"
-              className="w-full px-5 py-3.5 pl-12 border-2 border-gray-200 rounded-2xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300 hover:border-gray-300"
+              className="w-full px-3 sm:px-5 py-2.5 sm:py-3.5 pl-8 sm:pl-12 border-2 border-gray-200 rounded-xl sm:rounded-2xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300 hover:border-gray-300 text-sm sm:text-base"
             />
-            <Calendar className="absolute left-4 top-4 h-5 w-5 text-gray-400" />
+            <Calendar className="absolute left-2.5 sm:left-4 top-2.5 sm:top-4 h-4 sm:h-5 w-4 sm:w-5 text-gray-400" />
             {date && (
-              <CheckCircle2 className="absolute right-4 top-4 h-5 w-5 text-green-500" />
+              <CheckCircle2 className="absolute right-3 sm:right-4 top-2.5 sm:top-4 h-4 sm:h-5 w-4 sm:w-5 text-green-500" />
             )}
           </div>
-          <div className="absolute -top-2 right-0 text-xs text-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity">
+          <div className="absolute -top-2 right-0 text-[10px] sm:text-xs text-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity">
             Select birth date
           </div>
         </div>
 
-        <div className="flex gap-4">
+        <div className="flex gap-2 sm:gap-4">
           <div className="flex-1 group relative">
-            <label className="block text-sm font-medium text-gray-700 mb-2 group-focus-within:text-indigo-600 transition-colors flex items-center gap-2">
-              <Clock className="h-4 w-4" />
+            <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2 group-focus-within:text-indigo-600 transition-colors flex items-center gap-2">
+              <Clock className="h-3 sm:h-4 w-3 sm:w-4" />
               Birth Time
             </label>
             <div className="relative">
@@ -315,27 +316,27 @@ function MainView({
                 onChange={handleTimeChange}
                 placeholder="HHMM"
                 maxLength={5}
-                className="w-full px-5 py-3.5 pl-12 border-2 border-gray-200 rounded-2xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300 hover:border-gray-300"
+                className="w-full px-3 sm:px-5 py-2.5 sm:py-3.5 pl-8 sm:pl-12 border-2 border-gray-200 rounded-xl sm:rounded-2xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300 hover:border-gray-300 text-sm sm:text-base"
               />
-              <Clock className="absolute left-4 top-4 h-5 w-5 text-gray-400" />
+              <Clock className="absolute left-2.5 sm:left-4 top-2.5 sm:top-4 h-4 sm:h-5 w-4 sm:w-5 text-gray-400" />
               {time && (
-                <CheckCircle2 className="absolute right-4 top-4 h-5 w-5 text-green-500" />
+                <CheckCircle2 className="absolute right-3 sm:right-4 top-2.5 sm:top-4 h-4 sm:h-5 w-4 sm:w-5 text-green-500" />
               )}
             </div>
-            <div className="absolute -top-2 right-0 text-xs text-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity">
+            <div className="absolute -top-2 right-0 text-[10px] sm:text-xs text-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity">
               Enter birth time in HHMM format
             </div>
           </div>
 
-          <div className="w-32 group relative">
-            <label className="block text-sm font-medium text-gray-700 mb-2 group-focus-within:text-indigo-600 transition-colors">
+          <div className="w-24 sm:w-32 group relative">
+            <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2 group-focus-within:text-indigo-600 transition-colors">
               AM/PM
             </label>
             <select
               value={ampm}
               onChange={(e) => setAmpm(e.target.value)}
               title="Select AM/PM"
-              className="w-full px-5 py-3.5 border-2 border-gray-200 rounded-2xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300 appearance-none bg-white hover:border-gray-300"
+              className="w-full px-2 sm:px-5 py-2.5 sm:py-3.5 border-2 border-gray-200 rounded-xl sm:rounded-2xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300 appearance-none bg-white hover:border-gray-300 text-sm sm:text-base"
             >
               <option value="am">AM</option>
               <option value="pm">PM</option>
@@ -343,11 +344,11 @@ function MainView({
           </div>
         </div>
 
-        <div className="space-y-4 pt-6">
+        <div className="space-y-3 sm:space-y-4 pt-4 sm:pt-6">
           <button
             onClick={checkOriginalMatch}
             disabled={loading || !name || !selectedLocation || !date || !time}
-            className="w-full bg-gradient-to-r from-emerald-500 to-teal-500 text-white py-4 px-6 rounded-2xl hover:from-emerald-600 hover:to-teal-600 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] disabled:hover:scale-100 shadow-lg hover:shadow-xl disabled:hover:shadow-lg group relative"
+            className="w-full bg-gradient-to-r from-emerald-500 to-teal-500 text-white py-3 sm:py-4 px-4 sm:px-6 rounded-2xl hover:from-emerald-600 hover:to-teal-600 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 sm:gap-3 transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] disabled:hover:scale-100 shadow-lg hover:shadow-xl disabled:hover:shadow-lg group relative text-sm sm:text-base"
           >
             {loading ? (
               <>
@@ -370,7 +371,7 @@ function MainView({
           <button
             onClick={() => findMatch(false)}
             disabled={loading || !name || !selectedLocation || !date || !time}
-            className="w-full bg-gradient-to-r from-indigo-500 to-purple-500 text-white py-4 px-6 rounded-2xl hover:from-indigo-600 hover:to-purple-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] disabled:hover:scale-100 shadow-lg hover:shadow-xl disabled:hover:shadow-lg group relative"
+            className="w-full bg-gradient-to-r from-indigo-500 to-purple-500 text-white py-3 sm:py-4 px-4 sm:px-6 rounded-2xl hover:from-indigo-600 hover:to-purple-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 sm:gap-3 transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] disabled:hover:scale-100 shadow-lg hover:shadow-xl disabled:hover:shadow-lg group relative text-sm sm:text-base"
           >
             {loading ? (
               <>
@@ -396,54 +397,54 @@ function MainView({
         </div>
 
         {status && (
-          <div className="text-sm text-indigo-600 text-center animate-pulse bg-indigo-50 py-3 px-4 rounded-xl flex items-center justify-center gap-2">
+          <div className="text-xs sm:text-sm text-indigo-600 text-center animate-pulse bg-indigo-50 py-2 sm:py-3 px-3 sm:px-4 rounded-xl flex items-center justify-center gap-2">
             <AlertCircle className="h-4 w-4" />
             {status}
           </div>
         )}
 
         {result && (
-          <div className="mt-8 p-8 bg-gradient-to-br from-white to-indigo-50/50 border-2 border-indigo-100 rounded-3xl space-y-6 relative overflow-hidden shadow-lg transform transition-all duration-500 hover:shadow-2xl hover:scale-[1.02]">
-            <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-bl-full opacity-50 -z-10" />
+          <div className="mt-6 sm:mt-8 p-4 sm:p-8 bg-gradient-to-br from-white to-indigo-50/50 border-2 border-indigo-100 rounded-2xl sm:rounded-3xl space-y-4 sm:space-y-6 relative overflow-hidden shadow-lg transform transition-all duration-500 hover:shadow-2xl hover:scale-[1.02]">
+            <div className="absolute top-0 right-0 w-20 sm:w-24 h-20 sm:h-24 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-bl-full opacity-50 -z-10" />
             
             <div className="flex justify-between items-start">
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 sm:gap-3">
                 {result.date === '23/7/1996' ? (
                   <div className="relative">
-                    <Star className="h-7 w-7 text-yellow-500 animate-spin-slow" />
+                    <Star className="h-6 sm:h-7 w-6 sm:w-7 text-yellow-500 animate-spin-slow" />
                     <div className="absolute inset-0 bg-yellow-500 rounded-full animate-ping opacity-20" />
                   </div>
                 ) : (
                   <div className="relative">
-                    <Heart className="h-7 w-7 text-pink-500 animate-pulse" />
+                    <Heart className="h-6 sm:h-7 w-6 sm:w-7 text-pink-500 animate-pulse" />
                     <div className="absolute inset-0 bg-pink-500 rounded-full animate-ping opacity-20" />
                   </div>
                 )}
-                <h2 className="text-2xl font-bold text-indigo-900">
+                <h2 className="text-xl sm:text-2xl font-bold text-indigo-900">
                   {result.date === '23/7/1996' ? 'Your Original Horoscope' : 'Perfect Match Found!'}
                 </h2>
               </div>
               <button
                 onClick={() => setShowIgnoredDates(true)}
-                className="text-sm text-indigo-600 hover:text-indigo-700 flex items-center gap-2 px-3 py-1.5 rounded-xl hover:bg-indigo-50 transition-all duration-300 group"
+                className="text-xs sm:text-sm text-indigo-600 hover:text-indigo-700 flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1 sm:py-1.5 rounded-xl hover:bg-indigo-50 transition-all duration-300 group"
               >
-                <X className="h-4 w-4 group-hover:rotate-90 transition-transform duration-300" />
+                <X className="h-3 sm:h-4 w-3 sm:w-4 group-hover:rotate-90 transition-transform duration-300" />
                 <span>Ignored ({ignoredDates.length})</span>
               </button>
             </div>
 
-            <div className="space-y-4">
-              <div className="flex items-center gap-3 p-4 hover:bg-white rounded-xl transition-colors group">
-                <Calendar className="h-6 w-6 text-indigo-600 group-hover:scale-110 transition-transform duration-300" />
-                <span className="text-gray-700 text-lg">
+            <div className="space-y-3 sm:space-y-4">
+              <div className="flex items-center gap-2 sm:gap-3 p-3 sm:p-4 hover:bg-white rounded-xl transition-colors group">
+                <Calendar className="h-5 sm:h-6 w-5 sm:w-6 text-indigo-600 group-hover:scale-110 transition-transform duration-300" />
+                <span className="text-gray-700 text-base sm:text-lg">
                   Birth Date: {result.date}
                 </span>
               </div>
 
-              <div className="flex items-center justify-between p-4 hover:bg-white rounded-xl transition-colors group">
-                <div className="flex items-center gap-3">
-                  <Star className="h-6 w-6 text-indigo-600 group-hover:rotate-45 transition-transform duration-300" />
-                  <span className="text-gray-700 text-lg">
+              <div className="flex items-center justify-between p-3 sm:p-4 hover:bg-white rounded-xl transition-colors group">
+                <div className="flex items-center gap-2 sm:gap-3">
+                  <Star className="h-5 sm:h-6 w-5 sm:w-6 text-indigo-600 group-hover:rotate-45 transition-transform duration-300" />
+                  <span className="text-gray-700 text-base sm:text-lg">
                     Nakshatra: {result.nakshatra}
                   </span>
                 </div>
@@ -453,19 +454,19 @@ function MainView({
                     e.stopPropagation();
                     copyToClipboard(result.nakshatra);
                   }}
-                  className="p-2 opacity-0 group-hover:opacity-100 hover:bg-indigo-50 rounded-xl transition-all duration-300 relative"
+                  className="p-1.5 sm:p-2 opacity-0 group-hover:opacity-100 hover:bg-indigo-50 rounded-xl transition-all duration-300 relative"
                 >
-                  <Copy className="h-4 w-4 text-gray-500" />
-                  <span className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs py-1 px-2 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
+                  <Copy className="h-3 sm:h-4 w-3 sm:w-4 text-gray-500" />
+                  <span className="absolute -top-6 sm:-top-8 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-[10px] sm:text-xs py-1 px-2 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
                     Copy to clipboard
                   </span>
                 </button>
               </div>
 
-              <div className="flex items-center justify-between p-4 hover:bg-white rounded-xl transition-colors group">
-                <div className="flex items-center gap-3">
-                  <Moon className="h-6 w-6 text-indigo-600 group-hover:rotate-45 transition-transform duration-300" />
-                  <span className="text-gray-700 text-lg">
+              <div className="flex items-center justify-between p-3 sm:p-4 hover:bg-white rounded-xl transition-colors group">
+                <div className="flex items-center gap-2 sm:gap-3">
+                  <Moon className="h-5 sm:h-6 w-5 sm:w-6 text-indigo-600 group-hover:rotate-45 transition-transform duration-300" />
+                  <span className="text-gray-700 text-base sm:text-lg">
                     Rasi: {result.rasi}
                   </span>
                 </div>
@@ -475,39 +476,39 @@ function MainView({
                     e.stopPropagation();
                     copyToClipboard(result.rasi);
                   }}
-                  className="p-2 opacity-0 group-hover:opacity-100 hover:bg-indigo-50 rounded-xl transition-all duration-300 relative"
+                  className="p-1.5 sm:p-2 opacity-0 group-hover:opacity-100 hover:bg-indigo-50 rounded-xl transition-all duration-300 relative"
                 >
-                  <Copy className="h-4 w-4 text-gray-500" />
-                  <span className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs py-1 px-2 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
+                  <Copy className="h-3 sm:h-4 w-3 sm:w-4 text-gray-500" />
+                  <span className="absolute -top-6 sm:-top-8 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-[10px] sm:text-xs py-1 px-2 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
                     Copy to clipboard
                   </span>
                 </button>
               </div>
 
-              <div className="flex items-center gap-3 p-4 hover:bg-white rounded-xl transition-colors group">
-                <Star className="h-6 w-6 text-yellow-500 group-hover:scale-110 transition-transform duration-300" />
-                <span className="text-gray-700 text-lg">
+              <div className="flex items-center gap-2 sm:gap-3 p-3 sm:p-4 hover:bg-white rounded-xl transition-colors group">
+                <Star className="h-5 sm:h-6 w-5 sm:w-6 text-yellow-500 group-hover:scale-110 transition-transform duration-300" />
+                <span className="text-gray-700 text-base sm:text-lg">
                   Match Points: {result.points}/10
                 </span>
               </div>
 
-              <div className="flex flex-col gap-3 pt-4">
+              <div className="flex flex-col gap-2 sm:gap-3 pt-3 sm:pt-4">
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
                     downloadHoroscopeImage(result.date, result.rasi, result.nakshatra);
                   }}
                   disabled={isDownloading}
-                  className="w-full bg-gradient-to-r from-indigo-500 to-purple-500 text-white py-4 px-6 rounded-xl hover:from-indigo-600 hover:to-purple-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] disabled:hover:scale-100 shadow-lg hover:shadow-xl disabled:hover:shadow-lg disabled:opacity-50 text-lg flex items-center justify-center gap-3 group"
+                  className="w-full bg-gradient-to-r from-indigo-500 to-purple-500 text-white py-3 sm:py-4 px-4 sm:px-6 rounded-xl hover:from-indigo-600 hover:to-purple-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] disabled:hover:scale-100 shadow-lg hover:shadow-xl disabled:hover:shadow-lg disabled:opacity-50 text-sm sm:text-lg flex items-center justify-center gap-2 sm:gap-3 group"
                 >
                   {isDownloading ? (
                     <>
-                      <Loader2 className="h-6 w-6 animate-spin" />
+                      <Loader2 className="h-5 sm:h-6 w-5 sm:w-6 animate-spin" />
                       <span>Generating Horoscope...</span>
                     </>
                   ) : (
                     <>
-                      <Download className="h-6 w-6 group-hover:scale-110 transition-transform duration-300" />
+                      <Download className="h-5 sm:h-6 w-5 sm:w-6 group-hover:scale-110 transition-transform duration-300" />
                       <span>Download Horoscope</span>
                     </>
                   )}
@@ -518,11 +519,11 @@ function MainView({
                     e.stopPropagation();
                     navigate('/details');
                   }}
-                  className="w-full bg-white border-2 border-indigo-200 text-indigo-600 py-4 px-6 rounded-xl hover:bg-indigo-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] text-lg flex items-center justify-center gap-3 group"
+                  className="w-full bg-white border-2 border-indigo-200 text-indigo-600 py-3 sm:py-4 px-4 sm:px-6 rounded-xl hover:bg-indigo-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] text-sm sm:text-lg flex items-center justify-center gap-2 sm:gap-3 group"
                 >
-                  <Eye className="h-6 w-6 group-hover:scale-110 transition-transform duration-300" />
+                  <Eye className="h-5 sm:h-6 w-5 sm:w-6 group-hover:scale-110 transition-transform duration-300" />
                   <span>View Match Details</span>
-                  <ChevronRight className="h-5 w-5 group-hover:translate-x-1 transition-transform duration-300" />
+                  <ChevronRight className="h-4 sm:h-5 w-4 sm:w-5 group-hover:translate-x-1 transition-transform duration-300" />
                 </button>
               </div>
             </div>
@@ -1080,7 +1081,7 @@ function App() {
 
   return (
     <Router>
-      <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 p-6 md:p-10">
+      <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 p-2 sm:p-6 md:p-10">
         <div className="max-w-2xl mx-auto">
           <Routes>
             <Route 
@@ -1129,34 +1130,34 @@ function App() {
         </div>
 
         {showHistory && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-2xl p-6 max-w-2xl w-full max-h-[80vh] flex flex-col">
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-semibold">Search History</h2>
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-2 sm:p-4">
+            <div className="bg-white rounded-2xl p-4 sm:p-6 max-w-2xl w-full max-h-[90vh] sm:max-h-[80vh] flex flex-col">
+              <div className="flex justify-between items-center mb-3 sm:mb-4">
+                <h2 className="text-lg sm:text-xl font-semibold">Search History</h2>
                 <button
                   title="Close history"
                   onClick={() => setShowHistory(false)}
-                  className="p-2 hover:bg-gray-100 rounded-full"
+                  className="p-1.5 sm:p-2 hover:bg-gray-100 rounded-full"
                 >
-                  <X className="h-5 w-5" />
+                  <X className="h-4 sm:h-5 w-4 sm:w-5" />
                 </button>
               </div>
 
-              <div className="relative mb-4">
+              <div className="relative mb-3 sm:mb-4">
                 <input
                   type="text"
                   value={historySearchQuery}
                   onChange={(e) => setHistorySearchQuery(e.target.value)}
                   placeholder="Search history..."
-                  className="w-full px-4 py-2.5 pl-10 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  className="w-full px-3 sm:px-4 py-2 sm:py-2.5 pl-8 sm:pl-10 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm sm:text-base"
                 />
-                <Search className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+                <Search className="absolute left-2.5 sm:left-3 top-2.5 sm:top-3 h-4 sm:h-5 w-4 sm:w-5 text-gray-400" />
               </div>
 
-              <div className="overflow-y-auto flex-1 -mx-6 px-6">
-                <div className="space-y-3">
+              <div className="overflow-y-auto flex-1 -mx-4 sm:-mx-6 px-4 sm:px-6">
+                <div className="space-y-2 sm:space-y-3">
                   {filteredHistory.length === 0 ? (
-                    <div className="text-center text-gray-500 py-4">
+                    <div className="text-center text-gray-500 py-3 sm:py-4 text-sm sm:text-base">
                       No matching records found
                     </div>
                   ) : (
@@ -1164,57 +1165,57 @@ function App() {
                       <div
                         key={index}
                         onClick={() => applyHistoryItem(item)}
-                        className="p-4 border border-gray-200 rounded-xl cursor-pointer hover:bg-indigo-50 transition-colors duration-150 group"
+                        className="p-3 sm:p-4 border border-gray-200 rounded-xl cursor-pointer hover:bg-indigo-50 transition-colors duration-150 group"
                       >
-                        <div className="flex justify-between items-start mb-2">
+                        <div className="flex justify-between items-start mb-1.5 sm:mb-2">
                           <div>
-                            <h3 className="font-medium text-lg text-indigo-600">{item.name}</h3>
-                            <p className="text-sm text-gray-600">
+                            <h3 className="font-medium text-base sm:text-lg text-indigo-600">{item.name}</h3>
+                            <p className="text-xs sm:text-sm text-gray-600">
                               {item.location.name}, {item.location.state}
                             </p>
                           </div>
-                          <div className="text-right text-sm text-gray-500">
+                          <div className="text-right text-xs sm:text-sm text-gray-500">
                             {new Date(item.timestamp).toLocaleDateString()}
                           </div>
                         </div>
                         
-                        <div className="grid grid-cols-2 gap-2 text-sm">
-                          <div className="flex items-center gap-2">
-                            <Calendar className="h-4 w-4 text-gray-400" />
+                        <div className="grid grid-cols-2 gap-1.5 sm:gap-2 text-xs sm:text-sm">
+                          <div className="flex items-center gap-1.5 sm:gap-2">
+                            <Calendar className="h-3 sm:h-4 w-3 sm:w-4 text-gray-400" />
                             <span>{item.date}</span>
                           </div>
-                          <div className="flex items-center gap-2">
-                            <Clock className="h-4 w-4 text-gray-400" />
+                          <div className="flex items-center gap-1.5 sm:gap-2">
+                            <Clock className="h-3 sm:h-4 w-3 sm:w-4 text-gray-400" />
                             <span>{item.time} {item.ampm}</span>
                           </div>
                         </div>
 
                         {item.result && (
-                          <div className="mt-2 pt-2 border-t border-gray-100">
-                            <div className="grid grid-cols-2 gap-2 text-sm">
-                              <div className="flex items-center gap-2">
-                                <Star className="h-4 w-4 text-indigo-400" />
+                          <div className="mt-1.5 sm:mt-2 pt-1.5 sm:pt-2 border-t border-gray-100">
+                            <div className="grid grid-cols-2 gap-1.5 sm:gap-2 text-xs sm:text-sm">
+                              <div className="flex items-center gap-1.5 sm:gap-2">
+                                <Star className="h-3 sm:h-4 w-3 sm:w-4 text-indigo-400" />
                                 <span>Nakshatra: {item.result.nakshatra}</span>
                               </div>
-                              <div className="flex items-center gap-2">
-                                <Moon className="h-4 w-4 text-indigo-400" />
+                              <div className="flex items-center gap-1.5 sm:gap-2">
+                                <Moon className="h-3 sm:h-4 w-3 sm:w-4 text-indigo-400" />
                                 <span>Rasi: {item.result.rasi}</span>
                               </div>
                             </div>
-                            <div className="mt-1 flex items-center gap-2 text-sm">
-                              <Star className="h-4 w-4 text-yellow-400" />
+                            <div className="mt-1 flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm">
+                              <Star className="h-3 sm:h-4 w-3 sm:w-4 text-yellow-400" />
                               <span>Match Points: {item.result.points}/10</span>
                             </div>
                             {item.ignoredDates && item.ignoredDates.length > 0 && (
-                              <div className="mt-1 flex items-center gap-2 text-sm text-gray-500">
-                                <X className="h-4 w-4" />
+                              <div className="mt-1 flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-gray-500">
+                                <X className="h-3 sm:h-4 w-3 sm:w-4" />
                                 <span>Ignored Dates: {item.ignoredDates.length}</span>
                               </div>
                             )}
                           </div>
                         )}
 
-                        <div className="mt-2 opacity-0 group-hover:opacity-100 transition-opacity text-sm text-indigo-600">
+                        <div className="mt-1.5 sm:mt-2 opacity-0 group-hover:opacity-100 transition-opacity text-xs sm:text-sm text-indigo-600">
                           Click to apply these details
                         </div>
                       </div>
@@ -1227,36 +1228,36 @@ function App() {
         )}
 
         {showIgnoredDates && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-2xl p-6 max-w-lg w-full max-h-[80vh] flex flex-col">
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-semibold">Ignored Dates ({ignoredDates.length})</h2>
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-2 sm:p-4">
+            <div className="bg-white rounded-2xl p-4 sm:p-6 max-w-lg w-full max-h-[90vh] sm:max-h-[80vh] flex flex-col">
+              <div className="flex justify-between items-center mb-3 sm:mb-4">
+                <h2 className="text-lg sm:text-xl font-semibold">Ignored Dates ({ignoredDates.length})</h2>
                 <button
                   title="Close ignored dates"
                   onClick={() => setShowIgnoredDates(false)}
-                  className="p-2 hover:bg-gray-100 rounded-full"
+                  className="p-1.5 sm:p-2 hover:bg-gray-100 rounded-full"
                 >
-                  <X className="h-5 w-5" />
+                  <X className="h-4 sm:h-5 w-4 sm:w-5" />
                 </button>
               </div>
 
-              <div className="overflow-y-auto flex-1 -mx-6 px-6">
+              <div className="overflow-y-auto flex-1 -mx-4 sm:-mx-6 px-4 sm:px-6">
                 {ignoredDates.length === 0 ? (
-                  <div className="text-center text-gray-500 py-4">
+                  <div className="text-center text-gray-500 py-3 sm:py-4 text-sm sm:text-base">
                     No ignored dates yet
                   </div>
                 ) : (
-                  <div className="space-y-3">
+                  <div className="space-y-2 sm:space-y-3">
                     {ignoredDates.map((ignored, index) => (
                       <div
                         key={index}
-                        className="p-4 border border-gray-200 rounded-xl flex justify-between items-center"
+                        className="p-3 sm:p-4 border border-gray-200 rounded-xl flex justify-between items-center"
                       >
                         <div>
-                          <div className="font-medium">
+                          <div className="font-medium text-sm sm:text-base">
                             {ignored.day}/{ignored.month}/1996
                           </div>
-                          <div className="text-xs text-gray-500 mt-1">
+                          <div className="text-[10px] sm:text-xs text-gray-500 mt-0.5 sm:mt-1">
                             Ignored on: {new Date(ignored.timestamp).toLocaleDateString()}
                           </div>
                         </div>
@@ -1266,10 +1267,10 @@ function App() {
                             setIgnoredDates(updatedIgnoredDates);
                             localStorage.setItem('ignoredDates', JSON.stringify(updatedIgnoredDates));
                           }}
-                          className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                          className="p-1.5 sm:p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                           title="Remove from ignored list"
                         >
-                          <X className="h-5 w-5" />
+                          <X className="h-4 sm:h-5 w-4 sm:w-5" />
                         </button>
                       </div>
                     ))}
@@ -1281,22 +1282,22 @@ function App() {
         )}
 
         {isInstallable && (
-          <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-200 shadow-lg">
+          <div className="fixed bottom-0 left-0 right-0 p-3 sm:p-4 bg-white border-t border-gray-200 shadow-lg">
             <div className="max-w-lg mx-auto flex items-center justify-between">
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 sm:gap-3">
                 <img 
                   src="/android-chrome-192x192.png" 
                   alt="App icon" 
-                  className="w-10 h-10 rounded-xl"
+                  className="w-8 sm:w-10 h-8 sm:h-10 rounded-xl"
                 />
                 <div>
-                  <h3 className="font-semibold">Install App</h3>
-                  <p className="text-sm text-gray-600">Add to your home screen for quick access</p>
+                  <h3 className="font-semibold text-sm sm:text-base">Install App</h3>
+                  <p className="text-xs sm:text-sm text-gray-600">Add to your home screen for quick access</p>
                 </div>
               </div>
               <button
                 onClick={installApp}
-                className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+                className="px-3 sm:px-4 py-1.5 sm:py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors text-sm sm:text-base"
               >
                 Install
               </button>
