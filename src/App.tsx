@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import debounce from 'lodash/debounce';
 import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
+import { useInstallPrompt } from './hooks/useInstallPrompt';
 
 interface Location {
   loc: string;
@@ -505,6 +506,7 @@ function App() {
   const [showIgnoredDates, setShowIgnoredDates] = useState(false);
   const [isSearchingNext, setIsSearchingNext] = useState(false);
   const [isApplyingHistory, setIsApplyingHistory] = useState(false);
+  const { isInstallable, installApp } = useInstallPrompt();
 
   useEffect(() => {
     const history = localStorage.getItem('searchHistory');
@@ -1136,6 +1138,31 @@ function App() {
                   </div>
                 )}
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* Install PWA Prompt */}
+        {isInstallable && (
+          <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-200 shadow-lg">
+            <div className="max-w-lg mx-auto flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <img 
+                  src="/android-chrome-192x192.png" 
+                  alt="App icon" 
+                  className="w-10 h-10 rounded-xl"
+                />
+                <div>
+                  <h3 className="font-semibold">Install App</h3>
+                  <p className="text-sm text-gray-600">Add to your home screen for quick access</p>
+                </div>
+              </div>
+              <button
+                onClick={installApp}
+                className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+              >
+                Install
+              </button>
             </div>
           </div>
         )}
