@@ -734,27 +734,52 @@ function App() {
     
     switch (strategy) {
       case 'july': {
-        for (let i = 0; i < count; i++) {
-          combinations.push({ day: Math.floor(Math.random() * 31) + 1, month: 7 });
+        // Start with day 23
+        combinations.push({ day: 23, month: 7 });
+        
+        // Then add the rest of the days from 1 to 31 (excluding 23 which we already added)
+        for (let day = 1; day <= 31; day++) {
+          if (day !== 23 && combinations.length < count) {
+            combinations.push({ day, month: 7 });
+          }
         }
         break;
       }
         
       case 'date23': {
-        const months = Array.from({ length: 12 }, (_, i) => i + 1);
-        const shuffledMonths = months.sort(() => Math.random() - 0.5);
-        for (let i = 0; i < Math.min(count, 12); i++) {
-          combinations.push({ day: 23, month: shuffledMonths[i] });
+        // Since there are only 12 months, we'll use all of them if count >= 12
+        // or a random subset if count < 12
+        const months = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+        const shuffledMonths = [...months].sort(() => Math.random() - 0.5);
+        
+        // Only take up to 12 months since that's all we have
+        const monthsToUse = shuffledMonths.slice(0, Math.min(count, 12));
+        
+        for (const month of monthsToUse) {
+          combinations.push({ day: 23, month });
         }
         break;
       }
         
       case 'random': {
-        while (combinations.length < count) {
-          const month = Math.floor(Math.random() * 12) + 1;
-          const maxDays = new Date(1996, month, 0).getDate();
-          const day = Math.floor(Math.random() * maxDays) + 1;
-          combinations.push({ day, month });
+        // Generate combinations for all days from February to December
+        for (let month = 2; month <= 12; month++) {
+          const maxDays = new Date(1996, month, 0).getDate(); // Get number of days in month
+          for (let day = 1; day <= maxDays; day++) {
+            combinations.push({ day, month });
+            if (combinations.length >= count) {
+              break;
+            }
+          }
+          if (combinations.length >= count) {
+            break;
+          }
+        }
+        
+        // If we still need more combinations, shuffle what we have
+        if (combinations.length > count) {
+          combinations.sort(() => Math.random() - 0.5);
+          combinations.splice(count);
         }
         break;
       }
@@ -876,7 +901,7 @@ function App() {
         if (bestMatch) break;
         
         setStatus(isSearchingNext ? `Finding next match: ${message}` : message);
-        const combinations = generateDateCombinations(strategy, 100);
+        const combinations = generateDateCombinations(strategy, 1000);
         
         const validCombinations = combinations.filter(
           ({ day, month }) => !isDateIgnored(day, month)
